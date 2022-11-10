@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "jwt-01"
+version = "0.1.0"
+description = ""
+authors = ["alina1412 <alina1412>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = {extras = ["all"], version = "^0.86.0"}
+python-dotenv = "^0.21.0"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
