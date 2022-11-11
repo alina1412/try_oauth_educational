@@ -17,7 +17,7 @@ def verify_user(user: dict, password: str) -> bool:
         return False
     return True
 
-    
+
 def validate_token(user, expired_time) -> None:
     if (
         not user

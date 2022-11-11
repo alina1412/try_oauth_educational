@@ -4,7 +4,7 @@ from typing import Any
 import jose
 from jose import jwt
 
- 
+
 def generate_token(username: str, key: str, algorithm: str = "HS256"):
     """ """
     expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
