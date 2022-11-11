@@ -10,6 +10,8 @@ python = "^3.10"
 fastapi = {extras = ["all"], version = "^0.86.0"}
 python-dotenv = "^0.21.0"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+black = "^22.10.0"
+isort = "^5.10.1"
 
 
 [build-system]
