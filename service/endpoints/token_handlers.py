@@ -1,13 +1,11 @@
-import datetime
-
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, status
 from jose import JWTError
 
 from service.config import key
 from service.exceptions.exceptions import CredentialsException
 from service.oauth.tokens import decode_token, generate_token
-from service.utils.fake_db import fake_db, get_user
-from service.utils.utils import verify_password, verify_user
+from service.utils.fake_db import get_user
+from service.utils.utils import validate_token, verify_user
 
 api_router = APIRouter(
     prefix="/v1",
@@ -16,13 +14,13 @@ api_router = APIRouter(
 
 
 @api_router.post(
-    "/token/get",
+    "/token/receive",
     responses={
         status.HTTP_400_BAD_REQUEST: {"description": "Bad request"},
         CredentialsException().status_code: {},
     },
 )
-def get_token(user_name: str, password: str):
+def generate_token_handler(user_name: str, password: str):
     """Верифицировать пользователя, сопоставляя присланный password с паролем из fake_db
     Генерировать токен и возвращать его пользователю."""
     assert key != None
@@ -42,22 +40,19 @@ def get_token(user_name: str, password: str):
         CredentialsException().status_code: {},
     },
 )
-def check_token(token: str):
+def check_token_handler(token: str):
     """Проверка токена"""
     try:
         data = decode_token(token, key)
         # Если токен валиден, то в data запишется содержимое claims.
+        expired_time = data.get("expire", None)
+        user = get_user(data.get("username", None))
     except JWTError as exc:
         raise CredentialsException(detail="Incorrect token") from exc
 
-    expired_time = data.get("expire", None)
-    user = get_user(data.get("user_name", None))
-
-    if (
-        not user
-        or expired_time is None
-        or datetime.datetime.fromisoformat(expired_time) < datetime.datetime.utcnow()
-    ):
-        raise CredentialsException(detail="expired token")
+    try:
+        validate_token(user, expired_time)
+    except CredentialsException as exc:
+        raise CredentialsException(detail="Incorrect token") from exc
 
     return {"token": "valid", "claims": data}
