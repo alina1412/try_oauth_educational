@@ -1,16 +1,16 @@
 fake_db = {
     "John Doe": {
-        "user_name": "John Doe",
+        "username": "John Doe",
         "password": "kcolsnrq",
         "is_admin": True,
     },
-    "bbb": {
-        "user_name": "bbb",
-        "password": "mm38doc6",
+    "joe": {
+        "username": "joe",
+        "password": "123",
         "is_admin": False,
     },
 }
 
 
-def get_user(user_name) -> dict:
-    return fake_db.get(user_name, {})
+def get_user(username) -> dict:
+    return fake_db.get(username, {})
