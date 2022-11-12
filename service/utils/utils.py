@@ -1,7 +1,14 @@
 import datetime
-from typing import Optional
+from typing import Any, Optional
 
+from fastapi import Depends, Request
+from jose import JWTError
+
+from service.config import key
 from service.exceptions.exceptions import CredentialsException
+from service.oauth.headers import get_token_from_header, is_bearer
+from service.oauth.tokens import decode_token
+from service.utils.fake_db import get_user
 
 
 def verify_password(user: Optional[dict], password) -> bool:
@@ -26,3 +33,34 @@ def validate_token(user: Optional[dict], expired_time: str) -> None:
         or datetime.datetime.fromisoformat(expired_time) < datetime.datetime.utcnow()
     ):
         raise CredentialsException(detail="expired token")
+
+
+def check_token(token: str) -> dict[str, Any]:
+    """Проверка токена"""
+    try:
+        data: dict = decode_token(token, key)
+        # Если токен валиден, то в data запишется содержимое claims.
+        expired_time = data.get("expire", None)
+        user = get_user(data.get("username", None))
+    except JWTError as exc:
+        raise CredentialsException(detail="Incorrect token") from exc
+
+    try:
+        validate_token(user, expired_time)
+    except CredentialsException as exc:
+        raise CredentialsException(detail=exc.detail) from exc
+
+    return {"token": "valid", "claims": data, "token_type": "bearer"}
+
+
+async def get_current_user(request: Request, bearer=Depends(is_bearer)) -> dict:
+    print("in function : get_current_user")
+    token = get_token_from_header(request)
+    if token is None:
+        print("get_current_user: no 'client_secret' in a header")
+        raise CredentialsException(detail="no 'client_secret' in a header")
+
+    token_info = check_token(token)
+    # token_info: {"token": "valid", "claims": data, "token_type": "bearer"}
+    data = token_info.get("claims", {})
+    return data

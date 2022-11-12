@@ -1,11 +1,13 @@
-from fastapi import APIRouter, status
-from jose import JWTError
+from typing import Any
+
+from fastapi import APIRouter, Depends, status
 
 from service.config import key
 from service.exceptions.exceptions import CredentialsException
-from service.oauth.tokens import decode_token, generate_token
+from service.oauth.tokens import generate_token
+from service.schemas.schemas import User
 from service.utils.fake_db import get_user
-from service.utils.utils import validate_token, verify_user
+from service.utils.utils import check_token, verify_user
 
 api_router = APIRouter(
     prefix="/v1",
@@ -14,45 +16,33 @@ api_router = APIRouter(
 
 
 @api_router.post(
-    "/token/receive",
+    "/token/get",
     responses={
         status.HTTP_400_BAD_REQUEST: {"description": "Bad request"},
         CredentialsException().status_code: {},
     },
 )
-def generate_token_handler(user_name: str, password: str):
-    """Верифицировать пользователя, сопоставляя присланный password с паролем из fake_db
-    Генерировать токен и возвращать его пользователю."""
+def generate_token_handler(user_input: User = Depends()):
+    """Верифицирует зфрегистрированного пользователя,
+    сопоставляя присланный password с паролем из fake_db
+    Генерирует токен и возвращает его пользователю."""
     assert key != None
-    user = get_user(user_name)
-    if not verify_user(user, password):
+    user = get_user(user_input.username)
+    if not verify_user(user, user_input.password):
         raise CredentialsException(
-            detail="Incorrect user_name or password",
+            detail="Incorrect username or password",
         )
-    token = generate_token(user_name, key)
-    return {"token": token}
+    token = generate_token(user_input.username, key)
+    return {"token": token, "token_type": "bearer"}
 
 
 @api_router.post(
     "/token/check",
     responses={
-        status.HTTP_400_BAD_REQUEST: {"description": "Bad request"},
         CredentialsException().status_code: {},
     },
 )
 def check_token_handler(token: str):
-    """Проверка токена"""
-    try:
-        data = decode_token(token, key)
-        # Если токен валиден, то в data запишется содержимое claims.
-        expired_time = data.get("expire", None)
-        user = get_user(data.get("username", None))
-    except JWTError as exc:
-        raise CredentialsException(detail="Incorrect token") from exc
-
-    try:
-        validate_token(user, expired_time)
-    except CredentialsException as exc:
-        raise CredentialsException(detail="Incorrect token") from exc
-
-    return {"token": "valid", "claims": data}
+    """Проверка существования и действительности токена"""
+    token_data: dict[str, Any] = check_token(token)
+    return token_data
