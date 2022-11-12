@@ -11,14 +11,18 @@ def test_open_handler(client):
 
 def test_private_handler_unauth(client):
     url = "/v1/"
-    lst = [("", b'{"detail":"Incorrect token"}', 401)]
-    for token, answer, code in lst:
-        response = client.post(
-            url + f"?username=joe&password=123",
-            headers={"Authorization": "bearer", "client_secret": token},
-        )
-        assert response.content == answer
-        assert response.status_code == code
+    username = "joe"
+    password = "123"
+    token = ""
+    answer = b'{"detail":"Incorrect token"}'
+    code = 401
+   
+    response = client.post(
+        url + f"?username={username}&password={password}",
+        headers={"Authorization": "bearer", "client_secret": token},
+    )
+    assert response.content == answer
+    assert response.status_code == code
 
 
 def get_test_token(client):

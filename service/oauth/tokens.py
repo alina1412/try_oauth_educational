@@ -18,7 +18,7 @@ def generate_token(username: str, key: str, algorithm: str = "HS256") -> str:
     return token
 
 
-def decode_token(token: str, key: str) -> dict[str, str]:
+def decode_token(token: str, key: str, algorithm: str = "HS256") -> dict[str, str]:
     """data: # {"username": username, "expire": expire}"""
-    data = jwt.decode(token, key)
+    data = jwt.decode(token, key, algorithms=algorithm)
     return data
