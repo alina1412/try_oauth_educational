@@ -3,6 +3,7 @@ from typing import Any, Optional
 
 from fastapi import Depends, Request
 from jose import JWTError
+from passlib.context import CryptContext
 
 from service.config import key
 from service.exceptions.exceptions import CredentialsException
@@ -11,11 +12,12 @@ from service.oauth.tokens import decode_token
 from service.utils.fake_db import get_user
 
 
+myctx = CryptContext(schemes=["sha256_crypt", "md5_crypt", "des_crypt"])
+
+
 def verify_password(user: Optional[dict], password: str) -> bool:
     password_in_db = user.get("password")
-    if password_in_db == password:
-        return True
-    return False
+    return myctx.verify(password, password_in_db)
 
 
 def verify_user(user: Optional[dict], password: str) -> bool:
