@@ -6,7 +6,7 @@ from jose import JWTError
 
 from service.config import key
 from service.exceptions.exceptions import CredentialsException
-from service.oauth.headers import get_token_from_header, is_bearer
+from service.oauth.headers import get_token_from_header, validate_bearer_type
 from service.oauth.tokens import decode_token
 from service.utils.fake_db import get_user
 
@@ -53,7 +53,7 @@ def check_token(token: str) -> dict[str, Any]:
     return {"token": "valid", "claims": data, "token_type": "bearer"}
 
 
-async def get_user_by_token(request: Request, bearer=Depends(is_bearer)) -> dict:
+async def get_user_by_token(request: Request, _=Depends(validate_bearer_type)) -> dict:
     print(f"in function : {get_user_by_token.__name__}")
     token = get_token_from_header(request)
     if token is None:
