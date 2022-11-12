@@ -2,7 +2,8 @@ from fastapi import APIRouter, Depends, status
 
 from service.exceptions.exceptions import CredentialsException
 from service.schemas.schemas import User
-from service.utils.utils import get_current_user
+from service.utils.fake_db import get_user
+from service.utils.utils import get_user_by_token, verify_user
 
 api_router = APIRouter(
     prefix="/v1",
@@ -14,14 +15,18 @@ api_router = APIRouter(
     "/",
     responses={
         status.HTTP_400_BAD_REQUEST: {"description": "Bad request"},
+        status.HTTP_422_UNPROCESSABLE_ENTITY: {"description": "Bad request"},
         CredentialsException().status_code: {},
     },
 )
 def get_private(
     user_input: User = Depends(),
-    user_token_data=Depends(get_current_user),
+    user_token_data=Depends(get_user_by_token)
 ):
-    """Page can be seen if  header has
-    -H 'Authorization:bearer'
+    """Page can be seen if user registered and
+    header has  -H 'Authorization:bearer' and
     -H 'client_secret:<user-token>"""
+    user = get_user(user_input.username)
+    if not verify_user(user, user_input.password):
+        raise CredentialsException
     return {"Hello": user_input.username, "data": user_token_data}
