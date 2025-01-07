@@ -19,7 +19,7 @@ def test_private_handler_unauth(client):
    
     response = client.post(
         url + f"?username={username}&password={password}",
-        headers={"Authorization": "bearer", "client_secret": token},
+        headers={"Authorization": "bearer xxx", "client_secret": token},
     )
     assert response.content == answer
     assert response.status_code == code
@@ -42,7 +42,7 @@ def test_private_handler_auth(client):
     url = "/v1/"
     response = client.post(
         url + f"?username=joe&password=123",
-        headers={"Authorization": "bearer", "client_secret": token},
+        headers={"Authorization": "bearer xxx", "client_secret": token},
     )
     assert response.status_code == 200
     data = json.loads(response.content)

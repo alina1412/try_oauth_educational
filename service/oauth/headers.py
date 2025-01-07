@@ -10,7 +10,7 @@ async def validate_bearer_type(request: Request) -> None:
     if not token_type:
         print("no 'Authorization' in a header")
 
-    if not token_type or token_type.lower() != "bearer":
+    if not token_type or token_type.split()[0].lower() != "bearer":
         print("CredentialsException")
         raise CredentialsException(detail="not type 'bearer' in a header")
 
