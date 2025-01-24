@@ -1,5 +1,3 @@
-from typing import Any
-
 from fastapi import APIRouter, Depends, status
 
 from service.config import key
@@ -44,5 +42,5 @@ def generate_token_handler(user_input: User = Depends()):
 )
 def check_token_handler(token: str):
     """Проверка существования и действительности токена"""
-    token_data: dict[str, Any] = check_token(token)
+    token_data = check_token(token)
     return token_data

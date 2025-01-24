@@ -15,6 +15,8 @@ httpx = "^0.28.1"
 uvicorn = "^0.34.0"
 fastapi = "^0.115.6"
 poetry = "^2.0.0"
+email-validator = "^2.2.0"
+pytz = "^2024.2"
 
 
 [tool.poetry.group.dev.dependencies]
@@ -27,3 +29,10 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.requires-plugins]
 poetry-plugin-export = ">=1.9"
+
+[tool.black]
+line-length = 79
+
+[tool.isort]
+line_length = 79
+known_local_folder = []

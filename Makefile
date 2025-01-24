@@ -7,3 +7,6 @@ lint:
 
 req:
 	poetry export -f requirements.txt --without-hashes --without dev --output requirements.txt
+
+test:
+	poetry run pytest -vsx

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, status
 from service.exceptions.exceptions import CredentialsException
 from service.schemas.schemas import User
 from service.utils.fake_db import get_user
-from service.utils.utils import get_user_by_token, verify_user
+from service.utils.utils import get_user_token_data, verify_user
 
 api_router = APIRouter(
     prefix="/v1",
@@ -19,9 +19,9 @@ api_router = APIRouter(
         CredentialsException().status_code: {},
     },
 )
-def get_private(
+def private_page(
     user_input: User = Depends(),
-    user_token_data=Depends(get_user_by_token)
+    user_token_data=Depends(get_user_token_data),
 ):
     """Page can be seen if user registered and
     header has  -H 'Authorization:bearer' and

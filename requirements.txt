@@ -45,6 +45,7 @@ pydantic==2.10.4 ; python_version >= "3.10" and python_version < "4.0"
 pyproject-hooks==1.2.0 ; python_version >= "3.10" and python_version < "4.0"
 python-dotenv==0.21.1 ; python_version >= "3.10" and python_version < "4.0"
 python-jose[cryptography]==3.3.0 ; python_version >= "3.10" and python_version < "4.0"
+pytz;
 pywin32-ctypes==0.2.3 ; python_version >= "3.10" and python_version < "4.0" and sys_platform == "win32"
 rapidfuzz==3.11.0 ; python_version >= "3.10" and python_version < "4.0"
 requests-toolbelt==1.0.0 ; python_version >= "3.10" and python_version < "4.0"

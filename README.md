@@ -24,11 +24,11 @@ hasher = CryptContext(schemes=["sha256_crypt", "md5_crypt", "des_crypt"])
 - Passing headers by curl 
 ```
 
-example of request 
+example of a request 
 
 curl -X 'POST' \
   'http://0.0.0.0:8000/v1/?username=joe&password=123' \
   -H 'accept: application/json' \
   -d '' -H 'Authorization:bearer xxx' \
-  -H 'client_secret:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvZSIsImV4cGlyZSI6IjIwMjItMTEtMTJUMTI6MjM6MzQuMjEyNDg3In0.plFNglaHGnmfOC-bH6pAUhhq9-Cmb3-YBBF2JkPDBYI'
+  -H 'client_secret:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvZSIsImV4cGlyZSI6IjIwMjUtMDEtMjRUMTQ6Mjg6MDMuMDM2NzI0KzAwOjAwIn0.GTphQVoUy6eBX14hx2UPXv6-4u4tbrgUEWLEHXGLFho'
 ```
