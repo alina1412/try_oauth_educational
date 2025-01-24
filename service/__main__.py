@@ -6,7 +6,13 @@ from service.endpoints.open_handlers import api_router as open_routes
 from service.endpoints.private_handlers import api_router as private_route
 from service.endpoints.token_handlers import api_router as token_routes
 
-app = FastAPI()
+app = FastAPI(
+    title="Backend",
+    description="",
+    docs_url="/docs/",
+    openapi_url="/openapi.json",
+    version="1.0.0",
+)
 
 
 def custom_openapi():
@@ -47,4 +53,10 @@ app.openapi = custom_openapi
 
 
 if __name__ == "__main__":
-    uvicorn.run("service.__main__:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(
+        "service.__main__:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        reload_dirs=["service"],
+    )

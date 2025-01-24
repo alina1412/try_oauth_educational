@@ -16,7 +16,7 @@ def test_private_handler_unauth(client):
     token = ""
     answer = b'{"detail":"Incorrect token"}'
     code = 401
-   
+
     response = client.post(
         url + f"?username={username}&password={password}",
         headers={"Authorization": "bearer xxx", "client_secret": token},
