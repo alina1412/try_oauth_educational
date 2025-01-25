@@ -11,6 +11,12 @@ for checking usage of jwt tokens and encode(), decode() methods from jose librar
 - FastAPI
 - swagger
 
+### Swagger
+- "Authorize" button allows to check auth in headers
+<img src="https://github.com/user-attachments/assets/cbb4a840-2ec3-4999-b97c-94a03152d992" width="50%">
+<img src="https://github.com/user-attachments/assets/bbd9bcd0-db5b-4692-8ca6-f77fa4bc25b4" width="50%">
+
+
 
 ### Topics to study:
 - Dependencies `from fastapi import Depends`
