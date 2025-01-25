@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 
 from service.exceptions.exceptions import CredentialsException
-from service.oauth.tokens import TokenManager
+from service.oauth.token_manager import TokenManager
 from service.schemas.schemas import (
     TokenCheckedSchema,
     TokenOutputSchema,

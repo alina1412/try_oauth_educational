@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import Depends, Request
 from passlib.context import CryptContext
 
@@ -7,7 +5,7 @@ from service.config import logger
 from service.exceptions.exceptions import CredentialsException
 from service.oauth.headers import validate_bearer_type
 from service.oauth.schemas import TokenDataDto
-from service.oauth.tokens import TokenManager
+from service.oauth.token_manager import TokenManager
 
 hasher = CryptContext(schemes=["sha256_crypt", "md5_crypt", "des_crypt"])
 
