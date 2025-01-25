@@ -4,7 +4,8 @@ from os import environ
 from dotenv import load_dotenv
 
 load_dotenv()
-key = environ.get("KEY")
+SECRET_KEY = environ.get("KEY")
+assert SECRET_KEY != None
 
 
 logging.basicConfig(

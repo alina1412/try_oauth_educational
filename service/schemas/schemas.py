@@ -1,7 +1,9 @@
+from datetime import datetime
+
 from pydantic import BaseModel, Field
 
 
-class User(BaseModel):
+class UserShema(BaseModel):
     username: str = Field(description="unique username")
     password: str = Field(description="password")
 
@@ -9,7 +11,31 @@ class User(BaseModel):
         json_schema_extra = {"example": {"username": "joe", "password": "123"}}
 
 
-class InputForm(User):
+class TokenOutputSchema(BaseModel):
+    token: str = Field(description="token")
+    token_type: str = Field(description="token_type")
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "token": "kjnevonwbw..vwfb.eabae",
+                "token_type": "bearer",
+            }
+        }
+
+
+class TokenDataSchema(BaseModel):
+    username: str = Field(description="username")
+    expire: datetime = Field(description="expire datetime")
+
+
+class TokenCheckedSchema(BaseModel):
+    token: str = Field(description="token")
+    claims: TokenDataSchema
+    token_type: str = Field(description="token_type")
+
+
+class InputFormSchema(BaseModel):
     client_secret: str = Field(
         description="client secret token",
     )

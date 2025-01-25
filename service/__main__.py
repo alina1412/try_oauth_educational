@@ -7,11 +7,7 @@ from service.endpoints.private_handlers import api_router as private_route
 from service.endpoints.token_handlers import api_router as token_routes
 
 app = FastAPI(
-    title="Backend",
-    description="",
     docs_url="/docs/",
-    openapi_url="/openapi.json",
-    version="1.0.0",
 )
 
 
@@ -20,7 +16,7 @@ def custom_openapi():
         return app.openapi_schema
 
     openapi_schema = get_openapi(
-        title="Custom title",
+        title="Educational api for auth by token",
         version="2.5.0",
         routes=app.routes,
     )

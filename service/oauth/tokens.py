@@ -1,30 +1,66 @@
 import datetime
 
 import pytz
-from jose import jwt
+from jose import JWTError, jwt
 
-from service.oauth.schemas import TokenDataDto
-
-
-def get_data_for_token(username: str) -> dict[str, str]:
-    """Make dict {"username": username, "expire": expire}"""
-    expire = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(
-        minutes=30
-    )
-    expire = expire.isoformat()
-    data_to_encode = {"username": username, "expire": expire}
-    return data_to_encode
+from service.config import SECRET_KEY
+from service.exceptions.exceptions import CredentialsException
+from service.oauth.schemas import TokenCheckedDataDto, TokenDataDto
+from service.utils.fake_db import get_user
 
 
-def generate_token(username: str, key: str, algorithm: str = "HS256") -> str:
-    """Make token from username,  key, expiration in timedelta(minutes=30)"""
-    data_to_encode = get_data_for_token(username)
-    token = jwt.encode(claims=data_to_encode, key=key, algorithm=algorithm)
-    return token
+class TokenManager:
+    ALGORITHM = "HS256"
 
+    def get_data_for_token(
+        self, username: str, timedelta_min=30
+    ) -> dict[str, str]:
+        expire = datetime.datetime.now(tz=pytz.utc) + datetime.timedelta(
+            minutes=timedelta_min
+        )
+        expire = expire.isoformat()
+        data_to_encode = {"username": username, "expire": expire}
+        return data_to_encode
 
-def decode_token(
-    token: str, key: str, algorithm: str = "HS256"
-) -> TokenDataDto:
-    data = jwt.decode(token, key, algorithms=algorithm)
-    return TokenDataDto(**data)
+    def generate_token(
+        self, username: str, algorithm: str | None = None
+    ) -> str:
+        """Make token by jwt.encode"""
+        algorithm = self.ALGORITHM if not algorithm else algorithm
+        data_to_encode = self.get_data_for_token(username)
+        token = jwt.encode(
+            claims=data_to_encode, key=SECRET_KEY, algorithm=algorithm
+        )
+        return token
+
+    def decode_token(
+        self, token: str, algorithm: str | None = None
+    ) -> TokenDataDto:
+        algorithm = self.ALGORITHM if not algorithm else algorithm
+        try:
+            data = jwt.decode(token, SECRET_KEY, algorithms=algorithm)
+        except JWTError as exc:
+            raise CredentialsException(detail="Incorrect token") from exc
+        return TokenDataDto(**data)
+
+    def validate_token(self, user: dict, expired_time: str) -> None:
+        if (
+            not user
+            or expired_time is None
+            or datetime.datetime.fromisoformat(expired_time)
+            < datetime.datetime.now(tz=pytz.utc)
+        ):
+            raise CredentialsException(detail="expired token")
+
+    def check_token(self, token: str) -> TokenCheckedDataDto:
+        decoded_token_data = self.decode_token(token)
+        user = get_user(decoded_token_data.username)
+        expired_time = decoded_token_data.expire
+        self.validate_token(user, expired_time)
+        return TokenCheckedDataDto(
+            **{
+                "token": "valid",
+                "claims": decoded_token_data,
+                "token_type": "bearer",
+            }
+        )

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, status
 
 from service.exceptions.exceptions import CredentialsException
-from service.schemas.schemas import User
+from service.schemas.schemas import UserShema
 from service.utils.fake_db import get_user
 from service.utils.utils import get_user_token_data, verify_user
 
@@ -20,7 +20,7 @@ api_router = APIRouter(
     },
 )
 def private_page(
-    user_input: User = Depends(),
+    user_input: UserShema = Depends(),
     user_token_data=Depends(get_user_token_data),
 ):
     """Page can be seen if user registered and
