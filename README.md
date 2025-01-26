@@ -1,6 +1,7 @@
 #### Educational FastApi project 
 for checking usage of jwt tokens and encode(), decode() methods from jose library.
 
+The project has "fake" database, passwords are used just for checking the technology.
 
 ### Tools used:
 - poetry
